@@ -29,6 +29,9 @@ class SyntacticalAnalyzer
     private:
 	LexicalAnalyzer * lex;
 	token_type token;
+    ofstream debug;
+    ofstream listing;
+    ofstream p2file;
 };
 	
 #endif
