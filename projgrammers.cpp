@@ -1,6 +1,8 @@
-//action
+//Function "action" attempts to apply rules 24-49.
 int SyntacticalAnalyzer::action() {
 	int errors = 0;
+
+	printDebug("Stepping into action with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	switch (token) {
 		case IF_T:
@@ -181,9 +183,11 @@ int SyntacticalAnalyzer::action() {
 	return errors;
 }
 
-//any_other_token
+//Function "any_other_token" attempts to apply rules 50-81.
 int SyntacticalAnalyzer::any_other_token() {
 	int errors = 0;
+
+	printDebug("Stepping into any_other_token with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	switch (token) {
 		case LPAREN_T:
@@ -365,9 +369,11 @@ int SyntacticalAnalyzer::any_other_token() {
 	return errors;
 }
 
-//stmt_pair
+//Function "stmt_pair" attempts to apply rules 20-21.
 int SyntacticalAnalyzer::stmt_pair() {
 	int errors = 0;
+
+	printDebug("Stepping into stmt_pair with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	//If LPAREN_T, apply rule 20.
 	if (token == LPAREN_T) {
@@ -381,9 +387,11 @@ int SyntacticalAnalyzer::stmt_pair() {
 	return errors;
 }
 
-//param_list
+//Function "param_list" attempts to apply rules 16-17.
 int SyntacticalAnalyzer::param_list() {
 	int errors = 0;
+
+	printDebug("Stepping into param_list with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	//If IDENT_T, apply rule 16. 
 	if (token == IDENT_T) {
