@@ -98,11 +98,14 @@ int SyntacticalAnalyzer::stmt_list()
         errors += stmt_list();
     }
     // Rule 6
-    if (token == RPAREN_T)
+    else if (token == RPAREN_T)
     {
         lex->GetToken();
         errors += stmt_list();
     }
+	else {
+		errors++;
+	}
     return errors;
 }
 
