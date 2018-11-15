@@ -20,7 +20,7 @@ class SyntacticalAnalyzer
     int quoted_lit();
     int more_tokens();
     int param_list();
-    int else_pair();
+    int else_part();
     int stmt_pair();
     int stmt_pair_body();
     int action();
