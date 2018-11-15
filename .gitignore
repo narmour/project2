@@ -1,4 +1,6 @@
-.o
-.x
+*.o
+*.x
+*.out
 .vscode/
 .idea/
+
