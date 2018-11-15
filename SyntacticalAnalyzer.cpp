@@ -123,12 +123,15 @@ int SyntacticalAnalyzer::stmt_list()
     // Rule 5
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
+	    printDebug("Applying rule 5.");
+
         lex->GetToken();
         errors += stmt_list();
     }
     // Rule 6
     if (token == RPAREN_T)
     {
+	    printDebug("Applying rule 6.");
         lex->GetToken();
         errors += stmt_list();
     }
@@ -180,6 +183,7 @@ int SyntacticalAnalyzer::more_defines(){
 int SyntacticalAnalyzer::define(){
     int errors = 0;
     if(token == DEFINE_T){
+	    printDebug("Applying rule 4.");
         token = lex->GetToken();  // consume
         if(token==LPAREN_T){
             token = lex->GetToken();  // consume
@@ -193,20 +197,29 @@ int SyntacticalAnalyzer::define(){
                     if(token==RPAREN_T){
                         token = lex->GetToken();  // consume
                     }
-                    else
+                    else{
+	                    reportError("Error: could not apply any rule4.");
                         errors++;
+                    }
                 }
-                else
+                else{
+	                reportError("Error: could not apply any rule4.");
                     errors++;
+                }
             }
-            else
+            else{
+	            reportError("Error: could not apply any rule4.");
                 errors++;
+            }
         }
-        else
+        else{
+	        reportError("Error: could not apply any rule4.");
             errors++;
+        }
 
     }
     else{
+	    reportError("Error: could not apply any rule4.");
         errors++;
     }
     return errors;
