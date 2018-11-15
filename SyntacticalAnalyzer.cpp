@@ -8,8 +8,9 @@ using namespace std;
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
 	lex = new LexicalAnalyzer (filename);
-    debug.open("P2.debug");
+    debug.open("P2.dbg");
     listing.open("P2.lst");
+	p2file.open("P2.p2");
     token = lex->GetToken();
 	cout << "SYNTAX ERRORS: " << program () << endl;
 
@@ -18,13 +19,18 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
     debug.close();
+	listing.close();
+	p2file.close();
 	delete lex;
 }
 
 void SyntacticalAnalyzer::reportError(const string &msg){
 	listing << msg << endl;
 }
-void SyntacticalAnalyzer::printDebug(const string &msg){
+void SyntacticalAnalyzer::printP2File(const string &msg){
+	p2file << msg << endl;
+}
+void SyntacticalAnalyzer::printDebug(const string &msg) {
 	debug << msg << endl;
 }
 
@@ -32,7 +38,7 @@ void SyntacticalAnalyzer::printDebug(const string &msg){
 int SyntacticalAnalyzer::program(){
     int errors = 0;
     if(token==LPAREN_T){
-	    printDebug("Applying rule 1.");
+	    printP2File("Applying rule 1.");
         token = lex->GetToken();  // WE APPLIED RULE 1
         errors += define();
 
@@ -63,11 +69,11 @@ int SyntacticalAnalyzer::program(){
 int SyntacticalAnalyzer::stmt(){
 	int errors = 0;
 	if(token==IDENT_T){
-	    printDebug("Applying rule 8.");
+	    printP2File("Applying rule 8.");
     	token = lex->GetToken();  // consume
     }
 	else if (token == LPAREN_T){
-	    printDebug("Applying rule 9.");
+	    printP2File("Applying rule 9.");
     	token = lex->GetToken();  // consume
 		errors+= action();
 		if(token == RPAREN_T){
@@ -79,7 +85,7 @@ int SyntacticalAnalyzer::stmt(){
         }
 	}
 	else{
-	    printDebug("Applying rule 7.");
+	    printP2File("Applying rule 7.");
         errors+=literal();
 		//errors++;
     }
@@ -90,7 +96,7 @@ int SyntacticalAnalyzer::stmt(){
 int SyntacticalAnalyzer::stmt_pair_body(){
 	int errors = 0;
 	if(token == ELSE_T){
-	    printDebug("Applying rule 23.");
+	    printP2File("Applying rule 23.");
     	token = lex->GetToken();  // consume
 		errors+=stmt();
 		if(token==RPAREN_T)
@@ -101,7 +107,7 @@ int SyntacticalAnalyzer::stmt_pair_body(){
         }
 	}
 	else{
-	    printDebug("Applying rule 22.");
+	    printP2File("Applying rule 22.");
 		errors+=stmt();
 		errors+=stmt();
 		if(token==RPAREN_T)
@@ -125,14 +131,14 @@ int SyntacticalAnalyzer::stmt_list()
     // Rule 5
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
-	    printDebug("Applying rule 5.");
+	    printP2File("Applying rule 5.");
         errors += stmt();
         errors+= stmt_list();
     }
     // Rule 6
     if (token == RPAREN_T)
     {
-	    printDebug("Applying rule 6.");
+	    printP2File("Applying rule 6.");
         //lex->GetToken();
     }
     return errors;
@@ -185,7 +191,7 @@ int SyntacticalAnalyzer::more_defines(){
 int SyntacticalAnalyzer::define(){
     int errors = 0;
     if(token == DEFINE_T){
-	    printDebug("Applying rule 4.");
+	    printP2File("Applying rule 4.");
         token = lex->GetToken();  // consume
         if(token==LPAREN_T){
             token = lex->GetToken();  // consume
@@ -231,12 +237,12 @@ int SyntacticalAnalyzer::define(){
 int SyntacticalAnalyzer::action() {
 	int errors = 0;
 
-	printDebug("Stepping into action with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printP2File("Stepping into action with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	switch (token) {
 	case IF_T:
 		//24
-		printDebug("Applying rule 24.");
+		printP2File("Applying rule 24.");
 		token = lex->GetToken();
 		errors += stmt();
 		errors += stmt();
@@ -244,7 +250,7 @@ int SyntacticalAnalyzer::action() {
 		break;
 	case COND_T:
 		//25
-		printDebug("Applying rule 25.");
+		printP2File("Applying rule 25.");
 		token = lex->GetToken();
 		if (token == LPAREN_T) {
 			token = lex->GetToken();
@@ -257,155 +263,155 @@ int SyntacticalAnalyzer::action() {
 		break;
 	case LISTOP_T:
 		//26
-		printDebug("Applying rule 26.");
+		printP2File("Applying rule 26.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case CONS_T:
 		//27
-		printDebug("Applying rule 27.");
+		printP2File("Applying rule 27.");
 		token = lex->GetToken();
 		errors += stmt();
 		errors += stmt();
 		break;
 	case AND_T:
 		//28
-		printDebug("Applying rule 28.");
+		printP2File("Applying rule 28.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case OR_T:
 		//29
-		printDebug("Applying rule 29.");
+		printP2File("Applying rule 29.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case NOT_T:
 		//30
-		printDebug("Applying rule 30.");
+		printP2File("Applying rule 30.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case NUMBERP_T:
 		//31
-		printDebug("Applying rule 31.");
+		printP2File("Applying rule 31.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case LISTP_T:
 		//32
-		printDebug("Applying rule 32.");
+		printP2File("Applying rule 32.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case ZEROP_T:
 		//33
-		printDebug("Applying rule 33.");
+		printP2File("Applying rule 33.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case NULLP_T:
 		//34
-		printDebug("Applying rule 34.");
+		printP2File("Applying rule 34.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case STRINGP_T:
 		//35
-		printDebug("Applying rule 35.");
+		printP2File("Applying rule 35.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case PLUS_T:
 		//36
-		printDebug("Applying rule 36.");
+		printP2File("Applying rule 36.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case MINUS_T:
 		//37
-		printDebug("Applying rule 37.");
+		printP2File("Applying rule 37.");
 		token = lex->GetToken();
 		errors += stmt();
 		errors += stmt_list();
 		break;
 	case DIV_T:
 		//38
-		printDebug("Applying rule 38.");
+		printP2File("Applying rule 38.");
 		token = lex->GetToken();
 		errors += stmt();
 		errors += stmt_list();
 		break;
 	case MULT_T:
 		//39
-		printDebug("Applying rule 39.");
+		printP2File("Applying rule 39.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case MODULO_T:
 		//40
-		printDebug("Applying rule 40.");
+		printP2File("Applying rule 40.");
 		token = lex->GetToken();
 		errors += stmt();
 		errors += stmt();
 		break;
 	case ROUND_T:
 		//41
-		printDebug("Applying rule 41.");
+		printP2File("Applying rule 41.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case EQUALTO_T:
 		//42
-		printDebug("Applying rule 42.");
+		printP2File("Applying rule 42.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case GT_T:
 		//43
-		printDebug("Applying rule 43.");
+		printP2File("Applying rule 43.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case LT_T:
 		//44
-		printDebug("Applying rule 44.");
+		printP2File("Applying rule 44.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case GTE_T:
 		//45
-		printDebug("Applying rule 45.");
+		printP2File("Applying rule 45.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case LTE_T:
 		//46
-		printDebug("Applying rule 46.");
+		printP2File("Applying rule 46.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case IDENT_T:
 		//47
-		printDebug("Applying rule 47.");
+		printP2File("Applying rule 47.");
 		token = lex->GetToken();
 		errors += stmt_list();
 		break;
 	case DISPLAY_T:
 		//48
-		printDebug("Applying rule 48.");
+		printP2File("Applying rule 48.");
 		token = lex->GetToken();
 		errors += stmt();
 		break;
 	case NEWLINE_T:
 		//49
-		printDebug("Applying rule 49.");
+		printP2File("Applying rule 49.");
 		token = lex->GetToken();
 		break;
 	default:
 		//Error
 		reportError("Error: could not apply any rule (24-49).");
-		printDebug("Error: could not apply any rule (24-49).");
+		printP2File("Error: could not apply any rule (24-49).");
 		errors++;
 		break;
 	}
@@ -417,12 +423,12 @@ int SyntacticalAnalyzer::action() {
 int SyntacticalAnalyzer::any_other_token() {
 	int errors = 0;
 
-	printDebug("Stepping into any_other_token with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printP2File("Stepping into any_other_token with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	switch (token) {
 	case LPAREN_T:
 		//50
-		printDebug("Applying rule 50.");
+		printP2File("Applying rule 50.");
 		token = lex->GetToken();
 		errors += more_tokens();
 		if (token == RPAREN_T) {
@@ -435,164 +441,164 @@ int SyntacticalAnalyzer::any_other_token() {
 		break;
 	case IDENT_T:
 		//51
-		printDebug("Applying rule 51.");
+		printP2File("Applying rule 51.");
 		token = lex->GetToken();
 		break;
 	case NUMLIT_T:
 		//52
-		printDebug("Applying rule 52.");
+		printP2File("Applying rule 52.");
 		token = lex->GetToken();
 		break;
 	case STRLIT_T:
 		//53
-		printDebug("Applying rule 53.");
+		printP2File("Applying rule 53.");
 		token = lex->GetToken();
 		break;
 	case CONS_T:
 		//54
-		printDebug("Applying rule 54.");
+		printP2File("Applying rule 54.");
 		token = lex->GetToken();
 		break;
 	case IF_T:
 		//55
-		printDebug("Applying rule 55.");
+		printP2File("Applying rule 55.");
 		token = lex->GetToken();
 		break;
 	case DISPLAY_T:
 		//56
-		printDebug("Applying rule 56.");
+		printP2File("Applying rule 56.");
 		token = lex->GetToken();
 		break;
 	case NEWLINE_T:
 		//57
-		printDebug("Applying rule 57.");
+		printP2File("Applying rule 57.");
 		token = lex->GetToken();
 		break;
 	case LISTOP_T:
 		//58
-		printDebug("Applying rule 58.");
+		printP2File("Applying rule 58.");
 		token = lex->GetToken();
 		break;
 	case AND_T:
 		//59
-		printDebug("Applying rule 59.");
+		printP2File("Applying rule 59.");
 		token = lex->GetToken();
 		break;
 	case OR_T:
 		//60
-		printDebug("Applying rule 60.");
+		printP2File("Applying rule 60.");
 		token = lex->GetToken();
 		break;
 	case NOT_T:
 		//61
-		printDebug("Applying rule 61.");
+		printP2File("Applying rule 61.");
 		token = lex->GetToken();
 		break;
 	case DEFINE_T:
 		//62
-		printDebug("Applying rule 62.");
+		printP2File("Applying rule 62.");
 		token = lex->GetToken();
 		break;
 	case NUMBERP_T:
 		//63
-		printDebug("Applying rule 63.");
+		printP2File("Applying rule 63.");
 		token = lex->GetToken();
 		break;
 	case LISTP_T:
 		//64
-		printDebug("Applying rule 64.");
+		printP2File("Applying rule 64.");
 		token = lex->GetToken();
 		break;
 	case ZEROP_T:
 		//65
-		printDebug("Applying rule 65.");
+		printP2File("Applying rule 65.");
 		token = lex->GetToken();
 		break;
 	case NULLP_T:
 		//66
-		printDebug("Applying rule 66.");
+		printP2File("Applying rule 66.");
 		token = lex->GetToken();
 		break;
 	case STRINGP_T:
 		//67
-		printDebug("Applying rule 67.");
+		printP2File("Applying rule 67.");
 		token = lex->GetToken();
 		break;
 	case PLUS_T:
 		//68
-		printDebug("Applying rule 68.");
+		printP2File("Applying rule 68.");
 		token = lex->GetToken();
 		break;
 	case MINUS_T:
 		//69
-		printDebug("Applying rule 69.");
+		printP2File("Applying rule 69.");
 		token = lex->GetToken();
 		break;
 	case DIV_T:
 		//70
-		printDebug("Applying rule 70.");
+		printP2File("Applying rule 70.");
 		token = lex->GetToken();
 		break;
 	case MULT_T:
 		//71
-		printDebug("Applying rule 71.");
+		printP2File("Applying rule 71.");
 		token = lex->GetToken();
 		break;
 	case MODULO_T:
 		//72
-		printDebug("Applying rule 72.");
+		printP2File("Applying rule 72.");
 		token = lex->GetToken();
 		break;
 	case ROUND_T:
 		//73
-		printDebug("Applying rule 73.");
+		printP2File("Applying rule 73.");
 		token = lex->GetToken();
 		break;
 	case EQUALTO_T:
 		//74
-		printDebug("Applying rule 74.");
+		printP2File("Applying rule 74.");
 		token = lex->GetToken();
 		break;
 	case GT_T:
 		//75
-		printDebug("Applying rule 75.");
+		printP2File("Applying rule 75.");
 		token = lex->GetToken();
 		break;
 	case LT_T:
 		//76
-		printDebug("Applying rule 76.");
+		printP2File("Applying rule 76.");
 		token = lex->GetToken();
 		break;
 	case GTE_T:
 		//77
-		printDebug("Applying rule 77.");
+		printP2File("Applying rule 77.");
 		token = lex->GetToken();
 		break;
 	case LTE_T:
 		//78
-		printDebug("Applying rule 78.");
+		printP2File("Applying rule 78.");
 		token = lex->GetToken();
 		break;
 	case SQUOTE_T:
 		//79
-		printDebug("Applying rule 79.");
+		printP2File("Applying rule 79.");
 		token = lex->GetToken();
 		errors += any_other_token();
 		break;
 	case COND_T:
 		//80
-		printDebug("Applying rule 80.");
+		printP2File("Applying rule 80.");
 		token = lex->GetToken();
 		break;
 	case ELSE_T:
 		//81
-		printDebug("Applying rule 81.");
+		printP2File("Applying rule 81.");
 		token = lex->GetToken();
 		break;
 	default:
 		//Error
 		reportError("Error: could not apply any rule (50-81).");
-		printDebug("Error: could not apply any rule (50-81).");
+		printP2File("Error: could not apply any rule (50-81).");
 		errors++;
 		break;
 	}
@@ -604,16 +610,16 @@ int SyntacticalAnalyzer::any_other_token() {
 int SyntacticalAnalyzer::stmt_pair() {
 	int errors = 0;
 
-	printDebug("Stepping into stmt_pair with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printP2File("Stepping into stmt_pair with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	//If LPAREN_T, apply rule 20.
 	if (token == LPAREN_T) {
-		printDebug("Applying rule 20...");
+		printP2File("Applying rule 20...");
 		token = lex->GetToken();
 		errors += stmt_pair_body();
 	}
 	//Else, apply rule 21 (lambda).
-	else printDebug("Applying rule 21...");
+	else printP2File("Applying rule 21...");
 
 	return errors;
 }
@@ -622,16 +628,16 @@ int SyntacticalAnalyzer::stmt_pair() {
 int SyntacticalAnalyzer::param_list() {
 	int errors = 0;
 
-	printDebug("Stepping into param_list with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printP2File("Stepping into param_list with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 
 	//If IDENT_T, apply rule 16. 
 	if (token == IDENT_T) {
-		printDebug("Applying rule 16...");
+		printP2File("Applying rule 16...");
 		token = lex->GetToken();
 		errors += param_list();
 	}
 	//Else, apply rule 17 (lambda).
-	else printDebug("Applying rule 17...");
+	else printP2File("Applying rule 17...");
 
 	return errors;
 }
@@ -643,14 +649,14 @@ int SyntacticalAnalyzer::else_part()
     // Rule 18
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
-		printDebug("Applying rule 18...");
+		printP2File("Applying rule 18...");
         token = lex->GetToken();
         errors += else_part();
     }
     // Rule 19
     else if (token == RPAREN_T)
     {
-		printDebug("Applying rule 19...");
+		printP2File("Applying rule 19...");
         token = lex->GetToken();
         errors += else_part();
     }
@@ -672,7 +678,7 @@ int SyntacticalAnalyzer::quoted_lit()
 	// applying rule 13
     else
     {
-		printDebug("Applying rule 13");
+		printP2File("Applying rule 13");
         token = lex->GetToken();
         errors += quoted_lit();
     }
@@ -684,21 +690,21 @@ int SyntacticalAnalyzer::literal()
 	// 10
     if (token == NUMLIT_T)
     {
-		printDebug("Applying rule 10...");
+		printP2File("Applying rule 10...");
         token = lex->GetToken();
         // errors += literal();
     }
 	// 11
 	else if (token == STRLIT_T)
 	{
-		printDebug("Applying rule 11...");
+		printP2File("Applying rule 11...");
 		token = lex->GetToken();
         // errors += literal();
 	}
 	// 12
 	else if (token == SQUOTE_T)
 	{
-		printDebug("Applying rule 12...");
+		printP2File("Applying rule 12...");
 		token = lex->GetToken();
 		errors += quoted_lit();
 	}
@@ -726,12 +732,12 @@ int SyntacticalAnalyzer::more_tokens()
     // Rule 15
     else if (token == RPAREN_T)
     {
-		printDebug("Applying rule 15...");
+		printP2File("Applying rule 15...");
         errors += more_tokens();
     }
 	// else if its not RPARENT_T || EOF_T
 	else {
-		printDebug("Applying rule 14...");
+		printP2File("Applying rule 14...");
 		errors += more_tokens();
 	}
 	

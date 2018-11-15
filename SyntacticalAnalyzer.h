@@ -26,6 +26,7 @@ class SyntacticalAnalyzer
     int action();
     int any_other_token();
 	void reportError(const string &msg);
+	void printP2File(const string &msg);
 	void printDebug(const string &msg);
 	~SyntacticalAnalyzer ();
     private:
