@@ -127,16 +127,14 @@ int SyntacticalAnalyzer::stmt_list()
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
 	    printDebug("Applying rule 5.");
-
-        lex->GetToken();
-        errors += stmt_list();
+        errors += stmt();
+        errors+= stmt_list();
     }
     // Rule 6
     if (token == RPAREN_T)
     {
 	    printDebug("Applying rule 6.");
-        lex->GetToken();
-        errors += stmt_list();
+        //lex->GetToken();
     }
     return errors;
 }
@@ -145,7 +143,25 @@ int SyntacticalAnalyzer::more_defines(){
 	int errors = 0;
     // apply rule 2
     // <more_defines> -> <define> LPARENT_T <more_defines>
-    if (token == DEFINE_T)
+    // apply rules 3
+    // <more_defines> -> IDENT_T <stmt_list> RPAREN_T
+    if (token == IDENT_T)
+    {
+        token = lex->GetToken();
+        errors += stmt_list();
+        if (token == RPAREN_T)
+        {
+            token = lex->GetToken();
+            // do nothing
+        }
+        else 
+        {
+            errors++;
+	        reportError("Error: could not apply any rule3.");
+        }
+
+    }
+    else
     {
         // Dont get token because on non terminal
         // lex->GetToken();
@@ -153,31 +169,15 @@ int SyntacticalAnalyzer::more_defines(){
         // dont consume it 
         if (token == LPAREN_T)
         {
-            lex->GetToken();
+            token = lex->GetToken();
         }
         else
         {
-            cout << "ERR LPAREN_T expected" << endl;
+	        reportError("Error: could not apply any rule2.");
+            errors++;
         }
 
         errors += more_defines();
-    }
-    // apply rules 3
-    // <more_defines> -> IDENT_T <stmt_list> RPAREN_T
-    if (token == IDENT_T)
-    {
-        lex->GetToken();
-        errors += stmt_list();
-        if (token == RPAREN_T)
-        {
-            // do nothing
-        }
-        else 
-        {
-            errors++;
-            cout << "Expecting a RPAREN_T" << endl;
-        }
-
     }
 
     return errors;
@@ -643,14 +643,14 @@ int SyntacticalAnalyzer::else_part()
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
 		printDebug("Applying rule 18...");
-        lex->GetToken();
+        token = lex->GetToken();
         errors += else_part();
     }
     // Rule 19
     else if (token == RPAREN_T)
     {
 		printDebug("Applying rule 19...");
-        lex->GetToken();
+        token = lex->GetToken();
         errors += else_part();
     }
 	else 
@@ -672,7 +672,7 @@ int SyntacticalAnalyzer::quoted_lit()
     else
     {
 		printDebug("Applying rule 13");
-        lex->GetToken();
+        token = lex->GetToken();
         errors += quoted_lit();
     }
     return errors;
@@ -684,21 +684,21 @@ int SyntacticalAnalyzer::literal()
     if (token == NUMLIT_T)
     {
 		printDebug("Applying rule 10...");
-        lex->GetToken();
+        token = lex->GetToken();
         // errors += literal();
     }
 	// 11
 	else if (token == STRLIT_T)
 	{
 		printDebug("Applying rule 11...");
-		lex->GetToken();
+		token = lex->GetToken();
         // errors += literal();
 	}
 	// 12
 	else if (token == SQUOTE_T)
 	{
 		printDebug("Applying rule 12...");
-		lex->GetToken();
+		token = lex->GetToken();
 		errors += quoted_lit();
 	}
 	else 
