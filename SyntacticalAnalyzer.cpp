@@ -9,13 +9,21 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
 	lex = new LexicalAnalyzer (filename);
 	token_type t;
-	program ();
+	cout << "SYNTAX ERRORS: " << program () << endl;
 }
 
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
 	delete lex;
 }
+
+void SyntacticalAnalyzer::reportError(const string &msg){
+	listing << msg << endl;
+}
+void SyntacticalAnalyzer::printDebug(const string &msg){
+	debug << msg << endl;
+}
+
 
 int SyntacticalAnalyzer::program(){
     int errors = 0;
@@ -59,6 +67,7 @@ int SyntacticalAnalyzer::stmt(){
 		}
 	else
 		errors++;
+	return errors;
 
 }
 
@@ -98,14 +107,11 @@ int SyntacticalAnalyzer::stmt_list()
         errors += stmt_list();
     }
     // Rule 6
-    else if (token == RPAREN_T)
+    if (token == RPAREN_T)
     {
         lex->GetToken();
         errors += stmt_list();
     }
-	else {
-		errors++;
-	}
     return errors;
 }
 

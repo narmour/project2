@@ -25,6 +25,8 @@ class SyntacticalAnalyzer
     int stmt_pair_body();
     int action();
     int any_other_token();
+	void reportError(const string &msg);
+	void printDebug(const string &msg);
 	~SyntacticalAnalyzer ();
     private:
 	LexicalAnalyzer * lex;
