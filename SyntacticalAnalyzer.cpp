@@ -8,13 +8,15 @@ using namespace std;
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
 	lex = new LexicalAnalyzer (filename);
-	token_type t;
+    debug.open("P2.debug");
+    token = lex->GetToken();
 	cout << "SYNTAX ERRORS: " << program () << endl;
 
 }
 
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
+    debug.close();
 	delete lex;
 }
 
@@ -29,6 +31,7 @@ void SyntacticalAnalyzer::printDebug(const string &msg){
 int SyntacticalAnalyzer::program(){
     int errors = 0;
 
+	    printDebug("Applying rule 10000.");
     if(token==LPAREN_T){
 	    printDebug("Applying rule 1.");
         token = lex->GetToken();  // WE APPLIED RULE 1
