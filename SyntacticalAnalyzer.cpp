@@ -10,6 +10,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	lex = new LexicalAnalyzer (filename);
 	token_type t;
 	cout << "SYNTAX ERRORS: " << program () << endl;
+
 }
 
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
@@ -617,12 +618,14 @@ int SyntacticalAnalyzer::else_part()
     // Rule 18
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
+		printDebug("Applying rule 18...");
         lex->GetToken();
         errors += else_part();
     }
     // Rule 19
     else if (token == RPAREN_T)
     {
+		printDebug("Applying rule 19...");
         lex->GetToken();
         errors += else_part();
     }
@@ -635,8 +638,10 @@ int SyntacticalAnalyzer::quoted_lit()
         errors++;
         cout << "ERR on quoted_lit..." << endl;
     }
+	// applying rule 13
     else
     {
+		printDebug("Applying rule 13");
         lex->GetToken();
         errors += quoted_lit();
     }
@@ -645,11 +650,25 @@ int SyntacticalAnalyzer::quoted_lit()
 int SyntacticalAnalyzer::literal()
 {
     int errors = 0;
-    if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
+	// 10
+    if (token == NUMLIT_T)
     {
+		printDebug("Applying rule 10...");
         lex->GetToken();
         errors += literal();
     }
+	if (token == STRLIT_T)
+	{
+		printDebug("Applying rule 11...");
+		lex->GetToken();
+        errors += literal();
+	}
+	 if (token == SQUOTE_T)
+	 {
+		printDebug("Applying rule 12...");
+		lex->GetToken();
+        errors += literal();
+	 }
     return errors;
 }
 
@@ -661,16 +680,21 @@ int SyntacticalAnalyzer::more_tokens()
     	// [0,14,83,14,15,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,83], // <more_tokens>
         
     int errors = 0;
-    // Rule 14
     if (token == EOF_T) 
     {
         errors++;
     }
     // Rule 15
-    if (token == RPAREN_T)
+    else if (token == RPAREN_T)
     {
+		printDebug("Applying rule 15...");
         errors += more_tokens();
     }
+	// 
+	else {
+
+	}
+	
     // 5 - 34
     // token == DEFINE_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T || token == ELSE_T || token == IF_T || token == COND_T || token == LISTOP_T || token == CONS_T || token == AND_T || token == OR_T || token == NOT_T || token == NUMBERP_T || token == LISTP_T || token == ZEROP_T || token == NULLP_T || STRINGP_T,PLUS_T,MINUS_T","DIV_T","MULT_T","MODULO_T || ROUND_T || EQUALTO_T || GT_T || LT_T || GTE_T || LTE_T || DISPLAY_T || NEWLINE_T
     return errors;
