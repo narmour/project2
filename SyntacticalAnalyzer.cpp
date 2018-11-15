@@ -44,9 +44,109 @@ int SyntacticalAnalyzer::program(){
 }
 
 
-int SyntacticalAnalyzer::more_defines(){
-    int errors;
+int SyntacticalAnalyzer::stmt(){
+	int errors = 0;
+	if(token==IDENT_T)
+    	token = lex->GetToken();  // consume
+	else if (token == LPAREN_T){
+    	token = lex->GetToken();  // consume
+		errors+= action();
+		if(token == RPAREN_T){
+    		token = lex->GetToken();  // consume
+		}
+		else
+			errors++;
+		}
+	else
+		errors++;
+
+}
+
+int SyntacticalAnalyzer::stmt_pair_body(){
+	int errors = 0;
+	if(token == ELSE_T){
+    	token = lex->GetToken();  // consume
+		errors+=stmt();
+		if(token==RPAREN_T)
+    		token = lex->GetToken();  // consume
+		else
+			errors++;
+	}
+	else{
+		errors+=stmt();
+		errors+=stmt();
+		if(token==RPAREN_T)
+    		token = lex->GetToken();  // consume
+		else
+			errors++;
+		errors+=stmt_pair();
+	}
+
+	return errors;
+}
+
+
+
+int SyntacticalAnalyzer::stmt_list()
+{
+    // [0,"LPAREN_T","EOF_T","IDENT_T","RPAREN_T","DEFINE_T","NUMLIT_T","STRLIT_T","SQUOTE_T","ELSE_T","IF_T","COND_T","LISTOP_T","CONS_T","AND_T","OR_T","NOT_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T","STRINGP_T","PLUS_T","MINUS_T","DIV_T","MULT_T","MODULO_T","ROUND_T","EQUALTO_T","GT_T","LT_T","GTE_T","LTE_T","DISPLAY_T","NEWLINE_T","$"],
+    int errors = 0;
+    // Rule 5
+    if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
+    {
+        lex->GetToken();
+        errors += stmt_list();
+    }
+    // Rule 6
+    if (token == RPAREN_T)
+    {
+        lex->GetToken();
+        errors += stmt_list();
+    }
     return errors;
+}
+
+int SyntacticalAnalyzer::more_defines(){
+	int errors = 0;
+    // apply rule 2
+    // <more_defines> -> <define> LPARENT_T <more_defines>
+    if (token == DEFINE_T)
+    {
+        // Dont get token because on non terminal
+        // lex->GetToken();
+        errors += define();
+        // dont consume it 
+        if (token == LPAREN_T)
+        {
+            lex->GetToken();
+        }
+        else
+        {
+            cout << "ERR LPAREN_T expected" << endl;
+        }
+
+        errors += more_defines();
+    }
+    // apply rules 3
+    // <more_defines> -> IDENT_T <stmt_list> RPAREN_T
+    if (token == IDENT_T)
+    {
+        lex->GetToken();
+        errors += stmt_list();
+        if (token == RPAREN_T)
+        {
+            // do nothing
+        }
+        else 
+        {
+            errors++;
+            cout << "Expecting a RPAREN_T" << endl;
+        }
+
+    }
+
+    return errors;
+
 }
 int SyntacticalAnalyzer::define(){
     int errors = 0;
@@ -56,11 +156,11 @@ int SyntacticalAnalyzer::define(){
             token = lex->GetToken();  // consume
             if(token==IDENT_T){
                 token = lex->GetToken();  // consume
-                param_list();
+                errors += param_list();
                 if(token==RPAREN_T){
                     token = lex->GetToken();  // consume
-                    stmt();
-                    stmt_list();
+                    errors+=stmt();
+                    errors+=stmt_list();
                     if(token==RPAREN_T){
                         token = lex->GetToken();  // consume
                     }
@@ -413,5 +513,71 @@ int SyntacticalAnalyzer::param_list() {
 	//Else, apply rule 17 (lambda).
 
 	return errors;
+}
+
+int SyntacticalAnalyzer::else_part()
+{
+    // [0,"LPAREN_T","EOF_T","IDENT_T","RPAREN_T","DEFINE_T","NUMLIT_T","STRLIT_T","SQUOTE_T","ELSE_T","IF_T","COND_T","LISTOP_T","CONS_T","AND_T","OR_T","NOT_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T","STRINGP_T","PLUS_T","MINUS_T","DIV_T","MULT_T","MODULO_T","ROUND_T","EQUALTO_T","GT_T","LT_T","GTE_T","LTE_T","DISPLAY_T","NEWLINE_T","$"],
+    int errors = 0;
+    // Rule 18
+    if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
+    {
+        lex->GetToken();
+        errors += else_part();
+    }
+    // Rule 19
+    else if (token == RPAREN_T)
+    {
+        lex->GetToken();
+        errors += else_part();
+    }
+    return errors;
+}
+int SyntacticalAnalyzer::quoted_lit()
+{
+    int errors = 0;
+    if (token == EOF_T || token == RPAREN_T) {
+        errors++;
+        cout << "ERR on quoted_lit..." << endl;
+    }
+    else
+    {
+        lex->GetToken();
+        errors += quoted_lit();
+    }
+    return errors;
+}
+int SyntacticalAnalyzer::literal()
+{
+    int errors = 0;
+    if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
+    {
+        lex->GetToken();
+        errors += literal();
+    }
+    return errors;
+}
+
+
+int SyntacticalAnalyzer::more_tokens()
+{
+        
+
+    	// [0,14,83,14,15,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,83], // <more_tokens>
+        
+    int errors = 0;
+    // Rule 14
+    if (token == EOF_T) 
+    {
+        errors++;
+    }
+    // Rule 15
+    if (token == RPAREN_T)
+    {
+        errors += more_tokens();
+    }
+    // 5 - 34
+    // token == DEFINE_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T || token == ELSE_T || token == IF_T || token == COND_T || token == LISTOP_T || token == CONS_T || token == AND_T || token == OR_T || token == NOT_T || token == NUMBERP_T || token == LISTP_T || token == ZEROP_T || token == NULLP_T || STRINGP_T,PLUS_T,MINUS_T","DIV_T","MULT_T","MODULO_T || ROUND_T || EQUALTO_T || GT_T || LT_T || GTE_T || LTE_T || DISPLAY_T || NEWLINE_T
+    return errors;
 }
 
