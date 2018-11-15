@@ -685,21 +685,21 @@ int SyntacticalAnalyzer::literal()
     {
 		printDebug("Applying rule 10...");
         lex->GetToken();
-        errors += literal();
+        // errors += literal();
     }
 	// 11
 	else if (token == STRLIT_T)
 	{
 		printDebug("Applying rule 11...");
 		lex->GetToken();
-        errors += literal();
+        // errors += literal();
 	}
 	// 12
 	else if (token == SQUOTE_T)
 	{
 		printDebug("Applying rule 12...");
 		lex->GetToken();
-		errors += literal();
+		errors += quoted_lit();
 	}
 	else 
 	{
