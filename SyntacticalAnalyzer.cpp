@@ -9,6 +9,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
 	lex = new LexicalAnalyzer (filename);
     debug.open("P2.debug");
+    listing.open("P2.lst");
     token = lex->GetToken();
 	cout << "SYNTAX ERRORS: " << program () << endl;
 
@@ -30,8 +31,6 @@ void SyntacticalAnalyzer::printDebug(const string &msg){
 
 int SyntacticalAnalyzer::program(){
     int errors = 0;
-
-	    printDebug("Applying rule 10000.");
     if(token==LPAREN_T){
 	    printDebug("Applying rule 1.");
         token = lex->GetToken();  // WE APPLIED RULE 1
@@ -44,17 +43,17 @@ int SyntacticalAnalyzer::program(){
                 token = lex->GetToken();  // consume
             else{
                 //cout 
-			    reportError("Error: could not apply any rule1.");
+			    reportError("Error: could not apply any rule1  expected EOF.");
                 errors+=1;
             }
         }
         else{
             errors+=1;
-			reportError("Error: could not apply any rule1.");
+			reportError("Error: could not apply any rule1. expected LPAREN_T");
         }
     }
     else{
-	    reportError("Error: could not apply any rule1.");
+	    reportError("Error: could not apply any rule1. LPAREN_T2");
         errors +=1;
     }
     return errors;
