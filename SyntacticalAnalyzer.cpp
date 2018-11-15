@@ -413,6 +413,192 @@ int SyntacticalAnalyzer::action() {
 	return errors;
 }
 
+//Function "action" attempts to apply rules 24-49.
+int SyntacticalAnalyzer::action() {
+	int errors = 0;
+
+	printDebug("Stepping into action with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+
+	switch (token) {
+	case IF_T:
+		//24
+		printDebug("Applying rule 24.");
+		token = lex->GetToken();
+		errors += stmt();
+		errors += stmt();
+		errors += else_part();
+		break;
+	case COND_T:
+		//25
+		printDebug("Applying rule 25.");
+		token = lex->GetToken();
+		if (token == LPAREN_T) {
+			token = lex->GetToken();
+			errors += stmt_pair_body();
+		}
+		else {
+			reportError("Trying to apply rule 25, expecting '(', instead saw Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+			errors++;
+		}
+		break;
+	case LISTOP_T:
+		//26
+		printDebug("Applying rule 26.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case CONS_T:
+		//27
+		printDebug("Applying rule 27.");
+		token = lex->GetToken();
+		errors += stmt();
+		errors += stmt();
+		break;
+	case AND_T:
+		//28
+		printDebug("Applying rule 28.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case OR_T:
+		//29
+		printDebug("Applying rule 29.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case NOT_T:
+		//30
+		printDebug("Applying rule 30.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case NUMBERP_T:
+		//31
+		printDebug("Applying rule 31.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case LISTP_T:
+		//32
+		printDebug("Applying rule 32.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case ZEROP_T:
+		//33
+		printDebug("Applying rule 33.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case NULLP_T:
+		//34
+		printDebug("Applying rule 34.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case STRINGP_T:
+		//35
+		printDebug("Applying rule 35.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case PLUS_T:
+		//36
+		printDebug("Applying rule 36.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case MINUS_T:
+		//37
+		printDebug("Applying rule 37.");
+		token = lex->GetToken();
+		errors += stmt();
+		errors += stmt_list();
+		break;
+	case DIV_T:
+		//38
+		printDebug("Applying rule 38.");
+		token = lex->GetToken();
+		errors += stmt();
+		errors += stmt_list();
+		break;
+	case MULT_T:
+		//39
+		printDebug("Applying rule 39.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case MODULO_T:
+		//40
+		printDebug("Applying rule 40.");
+		token = lex->GetToken();
+		errors += stmt();
+		errors += stmt();
+		break;
+	case ROUND_T:
+		//41
+		printDebug("Applying rule 41.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case EQUALTO_T:
+		//42
+		printDebug("Applying rule 42.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case GT_T:
+		//43
+		printDebug("Applying rule 43.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case LT_T:
+		//44
+		printDebug("Applying rule 44.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case GTE_T:
+		//45
+		printDebug("Applying rule 45.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case LTE_T:
+		//46
+		printDebug("Applying rule 46.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case IDENT_T:
+		//47
+		printDebug("Applying rule 47.");
+		token = lex->GetToken();
+		errors += stmt_list();
+		break;
+	case DISPLAY_T:
+		//48
+		printDebug("Applying rule 48.");
+		token = lex->GetToken();
+		errors += stmt();
+		break;
+	case NEWLINE_T:
+		//49
+		printDebug("Applying rule 49.");
+		token = lex->GetToken();
+		break;
+	default:
+		//Error
+		reportError("Error: could not apply any rule (24-49).");
+		printDebug("Error: could not apply any rule (24-49).");
+		errors++;
+		break;
+	}
+
+	return errors;
+}
+
 //Function "any_other_token" attempts to apply rules 50-81.
 int SyntacticalAnalyzer::any_other_token() {
 	int errors = 0;
@@ -429,6 +615,7 @@ int SyntacticalAnalyzer::any_other_token() {
 			token = lex->GetToken();
 		}
 		else {
+			reportError("Trying to apply rule 50, expecting ')', instead saw Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 			errors++;
 		}
 		break;

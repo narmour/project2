@@ -22,6 +22,7 @@ int SyntacticalAnalyzer::action() {
 				errors += stmt_pair_body();
 			}
 			else {
+				reportError("Trying to apply rule 25, expecting '(', instead saw Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 				errors++;
 			}
 			break;
@@ -199,6 +200,7 @@ int SyntacticalAnalyzer::any_other_token() {
 				token = lex->GetToken();
 			}
 			else {
+				reportError("Trying to apply rule 50, expecting ')', instead saw Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
 				errors++;
 			}
 			break;
