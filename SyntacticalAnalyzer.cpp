@@ -653,12 +653,18 @@ int SyntacticalAnalyzer::else_part()
         lex->GetToken();
         errors += else_part();
     }
+	else 
+	{
+		reportError("Error: Couldnt apply rule 14 or 15...");
+		errors++;
+	}
     return errors;
 }
 int SyntacticalAnalyzer::quoted_lit()
 {
     int errors = 0;
     if (token == EOF_T || token == RPAREN_T) {
+		reportError("Error: Couldnt apply rule 10 or 13...");
         errors++;
         cout << "ERR on quoted_lit..." << endl;
     }
@@ -681,18 +687,25 @@ int SyntacticalAnalyzer::literal()
         lex->GetToken();
         errors += literal();
     }
-	if (token == STRLIT_T)
+	// 11
+	else if (token == STRLIT_T)
 	{
 		printDebug("Applying rule 11...");
 		lex->GetToken();
         errors += literal();
 	}
-	 if (token == SQUOTE_T)
-	 {
+	// 12
+	else if (token == SQUOTE_T)
+	{
 		printDebug("Applying rule 12...");
 		lex->GetToken();
-        errors += literal();
-	 }
+		errors += literal();
+	}
+	else 
+	{
+		reportError("Error: Couldnt apply rule 10 or 11 or 12...");
+		errors++;
+	}
     return errors;
 }
 
@@ -706,6 +719,7 @@ int SyntacticalAnalyzer::more_tokens()
     int errors = 0;
     if (token == EOF_T) 
     {
+		reportError("Error: Couldnt apply rule 14 or 15...");
         errors++;
     }
     // Rule 15
