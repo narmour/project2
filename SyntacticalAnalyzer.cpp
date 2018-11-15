@@ -703,9 +703,10 @@ int SyntacticalAnalyzer::more_tokens()
 		printDebug("Applying rule 15...");
         errors += more_tokens();
     }
-	// 
+	// else if its not RPARENT_T || EOF_T
 	else {
-
+		printDebug("Applying rule 14...");
+		errors += more_tokens();
 	}
 	
     // 5 - 34
