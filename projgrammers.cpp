@@ -3,6 +3,8 @@ int SyntacticalAnalyzer::action() {
 	int errors = 0;
 
 	printP2File("Stepping into action with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printDebug("<action>");
+	printDebug(lex->GetLexeme());
 
 	switch (token) {
 		case IF_T:
@@ -189,6 +191,8 @@ int SyntacticalAnalyzer::any_other_token() {
 	int errors = 0;
 
 	printP2File("Stepping into any_other_token with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printDebug("<any_other_token>");
+	printDebug(lex->GetLexeme());
 
 	switch (token) {
 		case LPAREN_T:
@@ -376,6 +380,8 @@ int SyntacticalAnalyzer::stmt_pair() {
 	int errors = 0;
 
 	printP2File("Stepping into stmt_pair with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printDebug("<stmt_pair>");
+	printDebug(lex->GetLexeme());
 
 	//If LPAREN_T, apply rule 20.
 	if (token == LPAREN_T) {
@@ -394,6 +400,8 @@ int SyntacticalAnalyzer::param_list() {
 	int errors = 0;
 
 	printP2File("Stepping into param_list with Token: " + token_names[token] + ", Lexeme: " + lex->GetLexeme());
+	printDebug("<param_list>");
+	printDebug(lex->GetLexeme());
 
 	//If IDENT_T, apply rule 16. 
 	if (token == IDENT_T) {
