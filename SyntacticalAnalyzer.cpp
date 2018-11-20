@@ -184,7 +184,7 @@ int SyntacticalAnalyzer::stmt_list()
     }
     // Rule 6
 	// LAMBDA
-    if (token == RPAREN_T)
+    else if (token == RPAREN_T)
 	    printP2FileUsing("6");
 	
 	printP2Exiting("Stmt_List", lex->GetTokenName(token));

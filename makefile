@@ -16,6 +16,9 @@ SyntacticalAnalyzer.o : SyntacticalAnalyzer.cpp SyntacticalAnalyzer.h LexicalAna
 clean : 
 	rm -f *.o P2.out *.gch *.x *.p1 *.p2 *.ss *.lst *.dbg *.exp
 
+cleanTestFiles : 
+	rm -f *.p1 *.p2 *.ss *.lst *.dbg *.exp
+
 submit : Project2.cpp LexicalAnalyzer.h LexicalAnalyzer.cpp SyntacticalAnalyzer.h SyntacticalAnalyzer.cpp makefile README.txt
 	rm -rf TeamLetterP2
 	mkdir TeamLetterP2
