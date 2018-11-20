@@ -25,8 +25,11 @@ class SyntacticalAnalyzer
     int stmt_pair_body();
     int action();
     int any_other_token();
-	void reportError(const string &msg);
-	void printP2File(const string &msg);
+	void printListingFile(const string &msg);
+	void printP2File(const string &functionName, const string &tokenName, const string &lex);
+    void printP2FileUsing(const string &ruleNumber);
+    void printP2Exiting(const string &funkyName, const string &token);
+
 	void printDebug(const string &msg);
 	~SyntacticalAnalyzer ();
     private:
