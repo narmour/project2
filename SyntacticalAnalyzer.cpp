@@ -6,25 +6,17 @@
 using namespace std;
 
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
-{
-	string strFileName = filename;
-
-	// look for the last . 
-	size_t pos = strFileName.rfind('.');
-
-	// Get the file name
-	strFileName = strFileName.substr(0, pos);
-	
+{	
 	lex = new LexicalAnalyzer (filename);
-	string debugFileName = strFileName;
+	string debugFileName = filename;
 	debugFileName += ".dbg";
     debug.open(debugFileName);
 
-	string listingFileName = strFileName;
+	string listingFileName = filename;
 	listingFileName += ".lst";
     listing.open(listingFileName);
 
-	string p2FileName = strFileName;
+	string p2FileName = filename;
 	p2FileName += ".p2";
 	p2file.open(p2FileName);
 
