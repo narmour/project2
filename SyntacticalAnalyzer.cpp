@@ -5,8 +5,76 @@
 
 using namespace std;
 
+// 34 X 14
+// {LPAREN_T,EOF_T,IDENT_T,RPAREN_T,DEFINE_T,NUMLIT_T,STRLIT_T,SQUOTE_T,ELSE_T,IF_T,COND_T,LISTOP_T,CONS_T,AND_T,OR_T,NOT_T,NUMBERP_T,LISTP_T,ZEROP_T,NULLP_T,STRINGP_T,PLUS_T,MINUS_T,DIV_T,MULT_T,MODULO_T,ROUND_T,EQUALTO_T,GT_T,LT_T,GTE_T,LTE_T,DISPLAY_T,NEWLINE_T},
+static int syntacticalRuleNumbers [][34] = 
+	{
+	{1,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <program> 			0
+	{83,82,3,83,2,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 		// <more_defines>		1
+	{82,83,83,83,4,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83},		// <define>				2
+	{5,83,5,6,83,5,5,5,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 			// <stmt_list>			3
+	{9,83,8,82,83,7,7,7,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 		// <stmt>				4
+	{82,83,82,82,83,10,11,12,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <literal>			5
+	{13,83,13,82,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13}, 	// <quoted_lit>			6
+	{14,83,14,15,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14}, 	// <more_tokens>		7
+	{83,83,16,17,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <param_list>			8
+	{18,83,18,19,83,18,18,18,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <else_part>			9
+	{20,83,83,21,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <stmt_pair>			10
+	{22,83,22,82,83,22,22,22,23,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83}, 	// <stmt_pair_body>		11
+	{83,83,47,82,83,83,83,83,83,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,48,49}, 	// <action>				12
+	{50,83,51,82,62,52,53,79,81,55,80,58,54,59,60,61,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,56,57} 	//<any_other_token>		13
+};
+
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {	
+	
+	
+	
+	// a token maps to a row in the syntactical
+	// analyzer table.
+	// token_T -> [function][token_M]
+	row[LPAREN_T] = LPAREN_M;
+	row[EOF_T] = EOF_M;
+	row[IDENT_T] = IDENT_M;
+	row[RPAREN_T] = RPAREN_M;
+	row[DEFINE_T] = DEFINE_M;
+	row[NUMLIT_T] = NUMLIT_M;
+	row[STRLIT_T] = STRLIT_M;
+	row[SQUOTE_T] = SQUOTE_M;
+	row[ELSE_T] = ELSE_M;
+	row[IF_T] = IF_M; // 10
+	row[COND_T] = COND_M;
+	row[LISTOP_T] = LISTOP_M;
+	row[CONS_T] = CONS_M;
+	row[AND_T] = AND_M;
+	row[OR_T] = OR_M;
+	row[NOT_T] = NOT_M;
+	row[NUMBERP_T] = NUMBERP_M;
+	row[LISTP_T] = LISTP_M;
+	row[ZEROP_T] = ZEROP_M;
+	row[NULLP_T] = NULLP_M; // 20
+	row[STRINGP_T] = STRINGP_M;
+	row[PLUS_T] = PLUS_M;
+	row[MINUS_T] = MINUS_M;
+	row[DIV_T] = DIV_M;
+	row[MULT_T] = MULT_M;
+	row[MODULO_T] = MODULO_M;
+	row[ROUND_T] = ROUND_M;
+	row[EQUALTO_T] = EQUALTO_M;
+	row[GT_T] = GT_M; 
+	row[LT_T] = LT_M; // 30
+	row[GTE_T] = GTE_M;
+	row[LTE_T] = LTE_M;
+	row[DISPLAY_T] = DISPLAY_M;
+	row[NEWLINE_T] = NEWLINE_M; // 34
+	
+	
+	
+	
+	
+	
+	
+	
 	lex = new LexicalAnalyzer (filename);
 	string debugFileName = filename;
 	debugFileName += ".dbg";
@@ -21,7 +89,9 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	p2file.open(p2FileName);
 
     token = lex->GetToken();
-	cout << "SYNTAX ERRORS: " << program () << endl;
+	int ttlErrs = program ();
+	cout << "SYNTAX ERRORS: " << ttlErrs << endl;
+
 }
 
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
@@ -72,7 +142,11 @@ void SyntacticalAnalyzer::printDebug(const string &msg) {
 
 int SyntacticalAnalyzer::program(){
     int errors = 0;
-	printP2File("Program", token_names[token], lex->GetLexeme());
+	printP2File("Program", lex->GetTokenName(token), lex->GetLexeme());
+	while (!isValidToken(PROGRAM_F, token))
+		token = lex->GetToken();
+	
+
     if(token==LPAREN_T){
 		printP2FileUsing("1");
         token = lex->GetToken();  // WE APPLIED RULE 1
@@ -109,6 +183,9 @@ int SyntacticalAnalyzer::program(){
 int SyntacticalAnalyzer::stmt(){
 	int errors = 0;
 	printP2File("Stmt", token_names[token], lex->GetLexeme());
+	while (!isValidToken(STMT_F, token))
+		token = lex->GetToken();
+
 	if(token==IDENT_T){
 		printP2FileUsing("8");
     	token = lex->GetToken();  // consume
@@ -138,6 +215,9 @@ int SyntacticalAnalyzer::stmt(){
 int SyntacticalAnalyzer::stmt_pair_body(){
 	int errors = 0;
 	printP2File("Stmt_Pair_Body", token_names[token], lex->GetLexeme());
+	while (!isValidToken(STMT_PAIR_BODY_F, token))
+		token = lex->GetToken();
+
 	if(token == ELSE_T){
 		printP2FileUsing("23");
     	token = lex->GetToken();  // consume
@@ -172,6 +252,8 @@ int SyntacticalAnalyzer::stmt_list()
 {
 	int errors = 0;
 	printP2File("Stmt_List", token_names[token], lex->GetLexeme());
+	while (!isValidToken(STMT_LIST_F, token))
+		token = lex->GetToken();
 
 	// [0,"LPAREN_T","EOF_T","IDENT_T","RPAREN_T","DEFINE_T","NUMLIT_T","STRLIT_T","SQUOTE_T","ELSE_T","IF_T","COND_T","LISTOP_T","CONS_T","AND_T","OR_T","NOT_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T","STRINGP_T","PLUS_T","MINUS_T","DIV_T","MULT_T","MODULO_T","ROUND_T","EQUALTO_T","GT_T","LT_T","GTE_T","LTE_T","DISPLAY_T","NEWLINE_T","$"],
     
@@ -194,6 +276,8 @@ int SyntacticalAnalyzer::stmt_list()
 int SyntacticalAnalyzer::more_defines(){
 	int errors = 0;
 	printP2File("More_Defines", token_names[token], lex->GetLexeme());
+	while (!isValidToken(MORE_DEFINES_F, token))
+		token = lex->GetToken();
     // apply rule 2
     // <more_defines> -> <define> LPARENT_T <more_defines>
     // apply rules 3
@@ -229,6 +313,9 @@ int SyntacticalAnalyzer::more_defines(){
             errors++;
         }
 
+		// This is recursively calling itself
+		// Must consume token
+		// token = lex->GetToken(); ??? 
         errors += more_defines();
     }
 
@@ -239,6 +326,9 @@ int SyntacticalAnalyzer::more_defines(){
 int SyntacticalAnalyzer::define(){
     int errors = 0;
 	printP2File("Define", token_names[token], lex->GetLexeme());
+	while (!isValidToken(DEFINE_F, token))
+		token = lex->GetToken();
+
     if(token == DEFINE_T){
 	    // printP2File("Applying rule 4.");
 		printP2FileUsing("4");
@@ -289,6 +379,12 @@ int SyntacticalAnalyzer::define(){
 int SyntacticalAnalyzer::action() {
 	int errors = 0;
 	printP2File("Action", token_names[token], lex->GetLexeme());
+	while (!isValidToken(ACTION_F, token))
+	{
+		cout << "token: " << lex->GetTokenName(token) << " is invalid" << endl;
+		token = lex->GetToken();
+	}
+	cout << "token: " << lex->GetTokenName(token) << " is VALID" << endl;
 
 	switch (token) {
 		case IF_T:
@@ -462,9 +558,11 @@ int SyntacticalAnalyzer::action() {
 		default:
 			//Error
 			printListingFile("Error: could not apply any rule (24-49).");
-			// Advance token cause its
-			// an error token
 			errors++;
+			// We are going to recursively call this until we
+			// get a valid token.
+			// token = lex->GetToken();
+			// errors += action();
 			break;
 	}
 	printP2Exiting("Action", lex->GetTokenName(token));
@@ -475,6 +573,8 @@ int SyntacticalAnalyzer::action() {
 int SyntacticalAnalyzer::any_other_token() {
 	int errors = 0;
 	printP2File("Any_Other_Token", token_names[token], lex->GetLexeme());
+	while (!isValidToken(ANY_OTHER_TOKEN_F, token))
+		token = lex->GetToken();
 
 	switch (token) {
 		case LPAREN_T:
@@ -661,6 +761,8 @@ int SyntacticalAnalyzer::any_other_token() {
 int SyntacticalAnalyzer::stmt_pair() {
 	int errors = 0;
 	printP2File("Stmt_Pair", token_names[token], lex->GetLexeme());
+	while (!isValidToken(STMT_PAIR_F, token))
+		token = lex->GetToken();
 
 	// rule 20.
 	if (token == LPAREN_T) {
@@ -681,6 +783,8 @@ int SyntacticalAnalyzer::stmt_pair() {
 int SyntacticalAnalyzer::param_list() {
 	int errors = 0;
 	printP2File("Param_List", token_names[token], lex->GetLexeme());
+	while (!isValidToken(PARAM_LIST_F, token))
+		token = lex->GetToken();
 
 	//If IDENT_T, apply rule 16. 
 	if (token == IDENT_T) {
@@ -710,6 +814,8 @@ int SyntacticalAnalyzer::else_part()
     // [0,"LPAREN_T","EOF_T","IDENT_T","RPAREN_T","DEFINE_T","NUMLIT_T","STRLIT_T","SQUOTE_T","ELSE_T","IF_T","COND_T","LISTOP_T","CONS_T","AND_T","OR_T","NOT_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T","STRINGP_T","PLUS_T","MINUS_T","DIV_T","MULT_T","MODULO_T","ROUND_T","EQUALTO_T","GT_T","LT_T","GTE_T","LTE_T","DISPLAY_T","NEWLINE_T","$"],
     int errors = 0;
 	printP2File("Else_Part", token_names[token], lex->GetLexeme());
+	while (!isValidToken(ELSE_PART_F, token))
+		token = lex->GetToken();
 
     // Rule 18
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
@@ -736,6 +842,8 @@ int SyntacticalAnalyzer::quoted_lit()
 {
     int errors = 0;
 	printP2File("Quoted_Lit", token_names[token], lex->GetLexeme());
+	while (!isValidToken(QUOTED_LIT_F, token))
+		token = lex->GetToken();
 
     if (token == EOF_T || token == RPAREN_T) {
 		printListingFile("Error: Couldnt apply rule 10 or 13...");
@@ -757,6 +865,8 @@ int SyntacticalAnalyzer::literal()
 {
     int errors = 0;
 	printP2File("Literal", token_names[token], lex->GetLexeme());
+	while (!isValidToken(LITERAL_F, token))
+		token = lex->GetToken();
 
 	// 10
     if (token == NUMLIT_T)
@@ -793,6 +903,8 @@ int SyntacticalAnalyzer::more_tokens()
     // [0,14,83,14,15,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,83], // <more_tokens>    
     int errors = 0;
 	printP2File("More_Tokens", token_names[token], lex->GetLexeme());
+	while (!isValidToken(MORE_TOKENS_F, token))
+		token = lex->GetToken();
 
 	// This is the only rule that can throw an err
     if (token == EOF_T) 
@@ -821,3 +933,18 @@ int SyntacticalAnalyzer::more_tokens()
     return errors;
 }
 
+bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_type token_T)
+{
+	tokenMapper token_M = row[token_T];
+	cout << "fMap: " << fMap << endl;
+	cout << "token_M: " << token_M << endl;
+	cout << "test val: " << syntacticalRuleNumbers[0][0] << endl;
+	if (syntacticalRuleNumbers[fMap][token_M] != 82 || syntacticalRuleNumbers[fMap][token_M] != 83)
+	{
+		cout << "In isValidToken returning TRUE on token: " << lex->GetTokenName(token) << endl;
+		return true;
+	}
+	cout << "In isValidToken returning FALSE on token: " << lex->GetTokenName(token) << endl;
+	return false;
+}
+  

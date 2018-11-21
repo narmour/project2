@@ -16,6 +16,9 @@ SyntacticalAnalyzer.o : SyntacticalAnalyzer.cpp SyntacticalAnalyzer.h LexicalAna
 clean : 
 	rm -f *.o P2.out *.gch *.x *.p1 *.p2 *.ss *.lst *.dbg *.exp
 
+cleanProgram : 
+	rm -f *.o P2.out 
+
 cleanTestFiles : 
 	rm -f *.p1 *.p2 *.ss *.lst *.dbg *.exp
 
