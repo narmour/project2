@@ -151,7 +151,8 @@ int SyntacticalAnalyzer::program(){
 		printP2FileUsing("1");
         token = lex->GetToken();  // WE APPLIED RULE 1
         errors += define();
-
+		// p2file << "EXITED DEFINE IN MAIN" << endl;
+		cout << "SKIPPING LPAREN_T ON TOKEN: " << lex->GetTokenName(token) << endl;
         if(token==LPAREN_T){
 			// We arent applying rule 1 as we are in rule 1
 			// printP2FileUsing("1");
@@ -177,6 +178,7 @@ int SyntacticalAnalyzer::program(){
     }
 
 	// I cant explain this one. unless this was here Y4P2 was erroring out..
+	cout << "CALLING MORE_DEFINES" << endl;
 	errors += more_defines();
 	printP2Exiting("Program", token_names[token]);
     return errors;
@@ -320,14 +322,17 @@ int SyntacticalAnalyzer::more_defines(){
         }
         else
         {
-            printListingFile("Error: could not apply any rule2.");
+            printListingFile("Error: expected L_PAREN_T but got: ");
             errors++;
-            errors += more_defines();
         }
-
-		// This is recursively calling itself
-		// Must consume token
-		// token = lex->GetToken(); ??? 
+		if (token == IDENT_T)
+		{
+			errors += more_defines();
+		}
+		else
+		{
+			printListingFile("Error: expected DEFINE_T but got: ");
+		}
     }
 	else {
 		errors++;
