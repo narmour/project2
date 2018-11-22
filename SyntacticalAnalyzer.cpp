@@ -147,39 +147,37 @@ int SyntacticalAnalyzer::program(){
 		token = lex->GetToken();
 	
 
-    if(token==LPAREN_T){
+    if(token==LPAREN_T)
+	{
 		printP2FileUsing("1");
         token = lex->GetToken();  // WE APPLIED RULE 1
-        errors += define();
-		// p2file << "EXITED DEFINE IN MAIN" << endl;
-		cout << "SKIPPING LPAREN_T ON TOKEN: " << lex->GetTokenName(token) << endl;
-        if(token==LPAREN_T){
-			// We arent applying rule 1 as we are in rule 1
-			// printP2FileUsing("1");
-            token = lex->GetToken();  // consume
-			cout << "APPLYING more_defines()..." << endl;
-            errors+=more_defines();
-            // if(token==EOF_T)
-            //     token = lex->GetToken();  // consume
-            // else{
-            //     //cout 
-			//     printListingFile("Error: could not apply any rule1  expected EOF.");
-            //     errors+=1;
-            // }
-        }
-        else {
-            errors+=1;
-			printListingFile("Error: could not apply any rule1. expected LPAREN_T");
-        }
-    }
-    else{
-	    printListingFile("Error: could not apply any rule1. LPAREN_T2");
-        errors +=1;
-    }
-
-	// I cant explain this one. unless this was here Y4P2 was erroring out..
-	cout << "CALLING MORE_DEFINES" << endl;
+	}
+	else {
+		errors++; 
+		printListingFile("Error: expected LPAREN_T, but received: ");
+	}
+	if (token == DEFINE_T)
+	{
+		errors += define();
+	}
+	else
+	{
+		errors++;
+		printListingFile("Error: expected DEFINE_T, but received: ");
+	}
+	if (token == LPAREN_T)
+	{
+		token = lex->GetToken();
+	}
+	else
+	{
+		errors++;
+		printListingFile("Error: expected L_PARENT, but received: ");
+	}
+	// p2file << "calling more_defines.." << endl;
 	errors += more_defines();
+	// errors += more_defines();
+
 	printP2Exiting("Program", token_names[token]);
     return errors;
 }
@@ -312,6 +310,7 @@ int SyntacticalAnalyzer::more_defines(){
 
     }
     else if (token == DEFINE_T)
+	// else
     {
         printP2FileUsing("2");
         errors += define();
@@ -325,18 +324,11 @@ int SyntacticalAnalyzer::more_defines(){
             printListingFile("Error: expected L_PAREN_T but got: ");
             errors++;
         }
-		if (token == IDENT_T)
-		{
-			errors += more_defines();
-		}
-		else
-		{
-			printListingFile("Error: expected DEFINE_T but got: ");
-		}
+		
+		errors += more_defines();
+		
+	
     }
-	else {
-		errors++;
-	}
 
 	printP2Exiting("More_Defines", lex->GetTokenName(token));
     return errors;
@@ -789,9 +781,14 @@ int SyntacticalAnalyzer::stmt_pair() {
 		token = lex->GetToken();
 		errors += stmt_pair_body();
 	}
+	else if (token == RPAREN_T)
+		printP2FileUsing("21");
+	else
+	{
+		errors++;
+		printListingFile("Error: expected a RPAREN_T or a LPARENT_T but got: ");
+	}
 
-	// Else, apply rule 21 (lambda).
-	else printP2FileUsing("21");
 
 	printP2Exiting("Stmt_Pair", lex->GetTokenName(token));
 	return errors;
@@ -840,8 +837,8 @@ int SyntacticalAnalyzer::else_part()
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
     {
 		printP2FileUsing("18");
-        token = lex->GetToken();
-        errors += else_part();
+        // token = lex->GetToken();
+        errors += stmt();
     }
     // Rule 19 (lambda)
     else if (token == RPAREN_T)
