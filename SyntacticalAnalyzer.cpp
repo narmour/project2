@@ -156,16 +156,17 @@ int SyntacticalAnalyzer::program(){
 			// We arent applying rule 1 as we are in rule 1
 			// printP2FileUsing("1");
             token = lex->GetToken();  // consume
+			cout << "APPLYING more_defines()..." << endl;
             errors+=more_defines();
-            if(token==EOF_T)
-                token = lex->GetToken();  // consume
-            else{
-                //cout 
-			    printListingFile("Error: could not apply any rule1  expected EOF.");
-                errors+=1;
-            }
+            // if(token==EOF_T)
+            //     token = lex->GetToken();  // consume
+            // else{
+            //     //cout 
+			//     printListingFile("Error: could not apply any rule1  expected EOF.");
+            //     errors+=1;
+            // }
         }
-        else{
+        else {
             errors+=1;
 			printListingFile("Error: could not apply any rule1. expected LPAREN_T");
         }
@@ -175,6 +176,8 @@ int SyntacticalAnalyzer::program(){
         errors +=1;
     }
 
+	// I cant explain this one. unless this was here Y4P2 was erroring out..
+	errors += more_defines();
 	printP2Exiting("Program", token_names[token]);
     return errors;
 }
@@ -184,7 +187,12 @@ int SyntacticalAnalyzer::stmt(){
 	int errors = 0;
 	printP2File("Stmt", token_names[token], lex->GetLexeme());
 	while (!isValidToken(STMT_F, token))
+	{
+		cout << "token: " << lex->GetTokenName(token) << " is invalid advancing" << endl;
 		token = lex->GetToken();
+	}
+	cout << "token: " << lex->GetTokenName(token) << " is valid" << endl;
+		
 
 	if(token==IDENT_T){
 		printP2FileUsing("8");
@@ -202,10 +210,13 @@ int SyntacticalAnalyzer::stmt(){
 			errors++;
         }
 	}
-	else{
+	else if (token == NUMLIT_T || token ==  STRLIT_T || token ==  SQUOTE_T) {
 	    printP2FileUsing("7");
         errors+=literal();
     }
+	else {
+		errors++;
+	}
 
 	printP2Exiting("Stmt", token_names[token]);
 	return errors;
@@ -298,7 +309,7 @@ int SyntacticalAnalyzer::more_defines(){
         }
 
     }
-    else
+    else if (token == DEFINE_T)
     {
         printP2FileUsing("2");
         errors += define();
@@ -309,15 +320,18 @@ int SyntacticalAnalyzer::more_defines(){
         }
         else
         {
-	        printListingFile("Error: could not apply any rule2.");
+            printListingFile("Error: could not apply any rule2.");
             errors++;
+            errors += more_defines();
         }
 
 		// This is recursively calling itself
 		// Must consume token
 		// token = lex->GetToken(); ??? 
-        errors += more_defines();
     }
+	else {
+		errors++;
+	}
 
 	printP2Exiting("More_Defines", lex->GetTokenName(token));
     return errors;
@@ -381,10 +395,10 @@ int SyntacticalAnalyzer::action() {
 	printP2File("Action", token_names[token], lex->GetLexeme());
 	while (!isValidToken(ACTION_F, token))
 	{
-		cout << "token: " << lex->GetTokenName(token) << " is invalid" << endl;
+		// cout << "token: " << lex->GetTokenName(token) << " is invalid" << endl;
 		token = lex->GetToken();
 	}
-	cout << "token: " << lex->GetTokenName(token) << " is VALID" << endl;
+	// cout << "token: " << lex->GetTokenName(token) << " is VALID" << endl;
 
 	switch (token) {
 		case IF_T:
@@ -854,8 +868,8 @@ int SyntacticalAnalyzer::quoted_lit()
     {
 		// printP2File("Applying rule 13");
 		printP2FileUsing("13");
-        token = lex->GetToken();
-        errors += quoted_lit();
+        // token = lex->GetToken();
+        errors += any_other_token();
     }
 
 	printP2Exiting("Quoted_Lit", lex->GetTokenName(token));
@@ -925,7 +939,7 @@ int SyntacticalAnalyzer::more_tokens()
     // token == DEFINE_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T || token == ELSE_T || token == IF_T || token == COND_T || token == LISTOP_T || token == CONS_T || token == AND_T || token == OR_T || token == NOT_T || token == NUMBERP_T || token == LISTP_T || token == ZEROP_T || token == NULLP_T || STRINGP_T,PLUS_T,MINUS_T","DIV_T","MULT_T","MODULO_T || ROUND_T || EQUALTO_T || GT_T || LT_T || GTE_T || LTE_T || DISPLAY_T || NEWLINE_T
 	else {
 		printP2FileUsing("14");
-		token = lex->GetToken();
+		errors += any_other_token();
 		errors += more_tokens();
 	}
 
@@ -935,16 +949,27 @@ int SyntacticalAnalyzer::more_tokens()
 
 bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_type token_T)
 {
+	if (token == EOF_T)
+		return true;
+
 	tokenMapper token_M = row[token_T];
-	cout << "fMap: " << fMap << endl;
-	cout << "token_M: " << token_M << endl;
-	cout << "test val: " << syntacticalRuleNumbers[0][0] << endl;
-	if (syntacticalRuleNumbers[fMap][token_M] != 82 || syntacticalRuleNumbers[fMap][token_M] != 83)
+	// bool tt = false;
+	// if (token_T == AND_T)
+	// {	
+	// 	tt = true;
+	// 	cout << "value of token_M: " << token_M << endl;
+	// }
+	//cout << "fMap: " << fMap << endl;
+	//cout << "token_M: " << token_M << endl;
+	//cout << "test val: " << syntacticalRuleNumbers[0][0] << endl;
+	if (syntacticalRuleNumbers[fMap][token_M] != 82 && syntacticalRuleNumbers[fMap][token_M] != 83)
 	{
-		cout << "In isValidToken returning TRUE on token: " << lex->GetTokenName(token) << endl;
+		// if (tt)
+		// 	cout << "mapping value: " << syntacticalRuleNumbers[fMap][token_M] << endl;
+		//cout << "In isValidToken returning TRUE on token: " << lex->GetTokenName(token) << endl;
 		return true;
 	}
-	cout << "In isValidToken returning FALSE on token: " << lex->GetTokenName(token) << endl;
+	//cout << "In isValidToken returning FALSE on token: " << lex->GetTokenName(token) << endl;
 	return false;
 }
   
