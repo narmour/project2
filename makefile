@@ -23,14 +23,14 @@ cleanTestFiles :
 	rm -f *.p1 *.p2 *.ss *.lst *.dbg *.exp
 
 submit : Project2.cpp LexicalAnalyzer.h LexicalAnalyzer.cpp SyntacticalAnalyzer.h SyntacticalAnalyzer.cpp makefile README.txt
-	rm -rf TeamLetterP2
-	mkdir TeamLetterP2
-	cp Project2.cpp TeamLetterP2
-	cp LexicalAnalyzer.h TeamLetterP2
-	cp LexicalAnalyzer.cpp TeamLetterP2
-	cp SyntacticalAnalyzer.h TeamLetterP2
-	cp SyntacticalAnalyzer.cpp TeamLetterP2
-	cp makefile TeamLetterP2
-	cp README.txt TeamLetterP2
-	tar cfvz TeamLetterP2.tgz TeamLetterP2
-	cp TeamLetterP2.tgz ~tiawatts/cs460drop
+	rm -rf TeamRP2
+	mkdir TeamRP2
+	cp Project2.cpp TeamRP2
+	cp LexicalAnalyzer.h TeamRP2
+	cp LexicalAnalyzer.cpp TeamRP2
+	cp SyntacticalAnalyzer.h TeamRP2
+	cp SyntacticalAnalyzer.cpp TeamRP2
+	cp makefile TeamRP2
+	cp README.txt TeamRP2
+	tar cfvz TeamRP2.tgz TeamRP2
+	cp TeamRP2.tgz ~tiawatts/cs460drop

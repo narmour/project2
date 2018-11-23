@@ -55,9 +55,6 @@ class SyntacticalAnalyzer
     ofstream listing;
     ofstream p2file;
 
-    // int syntacticalRuleNumbers[15][34];
-    
-
     void printListingFile(const string &msg);
 	void printP2File(const string &functionName, const string &tokenName, const string &lex);
     void printP2FileUsing(const string &ruleNumber);

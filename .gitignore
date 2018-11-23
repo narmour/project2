@@ -1,8 +1,10 @@
+.vscode/
+.idea/
+TeamRP2/
+
 *.o
 *.x
 *.out
-.vscode/
-.idea/
 *.p1
 *.p2
 *.lst
@@ -10,3 +12,5 @@
 *.ss
 *.exp
 diff.res
+*.code-workspace
+*.tgz

@@ -27,12 +27,9 @@ static int syntacticalRuleNumbers [][34] =
 
 SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {	
-	
-	
-	
 	// a token maps to a row in the syntactical
-	// analyzer table.
-	// token_T -> [function][token_M]
+	// analyzer table. 
+	// token_T -> [token_M]
 	row[LPAREN_T] = LPAREN_M;
 	row[EOF_T] = EOF_M;
 	row[IDENT_T] = IDENT_M;
@@ -68,13 +65,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	row[DISPLAY_T] = DISPLAY_M;
 	row[NEWLINE_T] = NEWLINE_M; // 34
 	
-	
-	
-	
-	
-	
-	
-	
+
 	lex = new LexicalAnalyzer (filename);
 	string debugFileName = filename;
 	debugFileName += ".dbg";
@@ -966,12 +957,14 @@ bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_typ
 	//cout << "test val: " << syntacticalRuleNumbers[0][0] << endl;
 	if (syntacticalRuleNumbers[fMap][token_M] != 82 && syntacticalRuleNumbers[fMap][token_M] != 83)
 	{
-		// if (tt)
-		// 	cout << "mapping value: " << syntacticalRuleNumbers[fMap][token_M] << endl;
-		//cout << "In isValidToken returning TRUE on token: " << lex->GetTokenName(token) << endl;
 		return true;
 	}
-	//cout << "In isValidToken returning FALSE on token: " << lex->GetTokenName(token) << endl;
+	//'"quotedLit1"' unexpected
+
+	lex->ReportError(string("\'")
+			+ lex->GetLexeme()
+			+ string("\'")
+			+ string(" unexpected"));
 	return false;
 }
   
