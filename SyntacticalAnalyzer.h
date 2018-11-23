@@ -55,7 +55,8 @@ class SyntacticalAnalyzer
     ofstream listing;
     ofstream p2file;
 
-    void printListingFile(const string &msg);
+    void writeLstExpected(const token_type token);
+    void writeLstUnexpected();
 	void printP2File(const string &functionName, const string &tokenName, const string &lex);
     void printP2FileUsing(const string &ruleNumber);
     void printP2Exiting(const string &funkyName, const string &token);
