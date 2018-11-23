@@ -67,16 +67,14 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	
 
 	lex = new LexicalAnalyzer (filename);
-	string debugFileName = filename;
-	debugFileName += ".dbg";
+
+	string name = filename;
+	name = name.substr(0, name.length()-3);
+
+	string debugFileName = name + ".dbg";
     debug.open(debugFileName);
 
-	string listingFileName = filename;
-	listingFileName += ".lst";
-    listing.open(listingFileName);
-
-	string p2FileName = filename;
-	p2FileName += ".p2";
+	string p2FileName = name + ".p2";
 	p2file.open(p2FileName);
 
     token = lex->GetToken();
