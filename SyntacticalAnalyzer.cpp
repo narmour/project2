@@ -95,7 +95,7 @@ void SyntacticalAnalyzer::writeLstExpected(const token_type token) {
     lex->ReportError("\'"
                     + lex->GetTokenName(token) 
                     + "\'"
-                    + " expected");
+                    + " expected ");
 }
 
 void SyntacticalAnalyzer::writeLstUnexpected(){
@@ -103,7 +103,7 @@ void SyntacticalAnalyzer::writeLstUnexpected(){
     lex->ReportError("\'" 
                     + lex->GetLexeme() 
                     + "\'"
-                    + " unexpected");
+                    + " unexpected ");
 }
 
 void SyntacticalAnalyzer::printP2File(const string &functionName, 
