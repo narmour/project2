@@ -321,8 +321,24 @@ int SyntacticalAnalyzer::more_defines(){
 
         else
         {
-            writeLstUnexpected();
+            // lex->ReportError("start while loop");
+            // while(token != EOF_T)
+            // {
+            //     writeLstExpected(LPAREN_T);
+            //     writeLstUnexpected();
+            //     token = lex->GetToken();
+            //     errors++;
+            //     if (token == LPAREN_T)
+            //     {
+            //         lex->GetToken();
+            //         break;
+            //     }
+            // }
+            // lex->ReportError("end while loop");
+            writeLstExpected(LPAREN_T);
             errors++;
+            
+            
         }
         
         errors += more_defines();
@@ -900,6 +916,7 @@ int SyntacticalAnalyzer::literal()
 {
     int errors = 0;
     printP2File("Literal", lex->GetTokenName(token), lex->GetLexeme());
+    
     while (!isValidToken(LITERAL_F, token))
         token = lex->GetToken();
 
@@ -972,6 +989,9 @@ bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_typ
     if (token == EOF_T)
         return true;
 
+    // if (token == RPAREN_T || token == LPAREN_T)
+    //     return true;
+
     tokenMapper token_M = row[token_T];
     
     if (syntacticalRuleNumbers[fMap][token_M] != 82 && syntacticalRuleNumbers[fMap][token_M] != 83)
@@ -979,7 +999,13 @@ bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_typ
         return true;
     }
   
-    writeLstUnexpected();
+    // writeLstUnexpected();
+    // debug << "writing from isValidToken()" << endl;
+    lex->ReportError("\'" 
+                    + lex->GetLexeme() 
+                    + "\'"
+                    + " unexpected "
+                    + " - writting from isValid()");
     return false;
 }
   
