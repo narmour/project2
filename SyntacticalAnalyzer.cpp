@@ -95,7 +95,7 @@ void SyntacticalAnalyzer::writeLstExpected(const token_type token) {
     lex->ReportError("\'"
                     + lex->GetTokenName(token) 
                     + "\'"
-                    + "expected");
+                    + " expected");
 }
 
 void SyntacticalAnalyzer::writeLstUnexpected(){
@@ -103,7 +103,7 @@ void SyntacticalAnalyzer::writeLstUnexpected(){
     lex->ReportError("\'" 
                     + lex->GetLexeme() 
                     + "\'"
-                    + "unexpected");
+                    + " unexpected");
 }
 
 void SyntacticalAnalyzer::printP2File(const string &functionName, 
@@ -154,7 +154,7 @@ int SyntacticalAnalyzer::program(){
     }
     else {
         errors++; 
-        writeLstUnexpected();
+        writeLstExpected(token);
     }
     if (token == DEFINE_T)
     {
@@ -163,7 +163,7 @@ int SyntacticalAnalyzer::program(){
     else
     {
         errors++;
-        writeLstUnexpected();
+        writeLstExpected(token);
     }
     if (token == LPAREN_T)
     {
@@ -172,10 +172,16 @@ int SyntacticalAnalyzer::program(){
     else
     {
         errors++;
-        writeLstUnexpected();
+        writeLstExpected(LPAREN_T);
     }
 
     errors += more_defines();
+
+    if (token != EOF_T)
+    {
+        errors++;
+        writeLstUnexpected();
+    }
 
     printP2Exiting("Program", lex->GetTokenName(token));
     return errors;
@@ -266,6 +272,7 @@ int SyntacticalAnalyzer::stmt_list()
         errors += stmt();
         errors+= stmt_list();
     }
+
     // Rule 6
     // LAMBDA
     else if (token == RPAREN_T)
@@ -325,6 +332,7 @@ int SyntacticalAnalyzer::more_defines(){
 
     else
     {
+        // writeLstExpected(LPAREN_T);
         errors++;
         writeLstUnexpected();
     }
