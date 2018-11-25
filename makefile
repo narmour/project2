@@ -22,6 +22,12 @@ cleanProgram :
 cleanTestFiles : 
 	rm -f *.p1 *.p2 *.ss *.lst *.dbg *.exp
 
+test-lst : 
+	./cmpttlerrs.sh 
+
+test-p2 : 
+	./run-all.sh
+
 submit : Project2.cpp LexicalAnalyzer.h LexicalAnalyzer.cpp SyntacticalAnalyzer.h SyntacticalAnalyzer.cpp makefile README.txt
 	rm -rf TeamRP2
 	mkdir TeamRP2
