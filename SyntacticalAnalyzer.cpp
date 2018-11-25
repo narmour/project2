@@ -143,8 +143,7 @@ void SyntacticalAnalyzer::printDebug(const string &msg) {
 int SyntacticalAnalyzer::program(){
     int errors = 0;
     printP2File("Program", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(PROGRAM_F, token))
-        token = lex->GetToken();
+    validateToken(PROGRAM_F);
     
 
     if(token==LPAREN_T)
@@ -180,7 +179,7 @@ int SyntacticalAnalyzer::program(){
     if (token != EOF_T)
     {
         errors++;
-        writeLstUnexpected();
+        writeLstExpected(EOF_T);
     }
 
     printP2Exiting("Program", lex->GetTokenName(token));
@@ -191,8 +190,7 @@ int SyntacticalAnalyzer::program(){
 int SyntacticalAnalyzer::stmt(){
     int errors = 0;
     printP2File("Stmt", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(STMT_F, token))
-        token = lex->GetToken();
+    validateToken(STMT_F);
 
     if(token==IDENT_T){
         printP2FileUsing("8");
@@ -206,7 +204,7 @@ int SyntacticalAnalyzer::stmt(){
             token = lex->GetToken();  // consume
         }
         else{
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
             errors++;
         }
     }
@@ -216,6 +214,7 @@ int SyntacticalAnalyzer::stmt(){
     }
     else {
         errors++;
+        writeLstUnexpected();
     }
 
     printP2Exiting("Stmt", lex->GetTokenName(token));
@@ -225,8 +224,7 @@ int SyntacticalAnalyzer::stmt(){
 int SyntacticalAnalyzer::stmt_pair_body(){
     int errors = 0;
     printP2File("Stmt_Pair_Body", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(STMT_PAIR_BODY_F, token))
-        token = lex->GetToken();
+    validateToken(STMT_PAIR_BODY_F);
 
     if(token == ELSE_T){
         printP2FileUsing("23");
@@ -235,7 +233,7 @@ int SyntacticalAnalyzer::stmt_pair_body(){
         if(token==RPAREN_T)
             token = lex->GetToken();  // consume
         else {
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
             errors++;
         }
     }
@@ -247,7 +245,7 @@ int SyntacticalAnalyzer::stmt_pair_body(){
             token = lex->GetToken();  // consume
         else {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
         }
         errors+=stmt_pair();
     }
@@ -262,8 +260,7 @@ int SyntacticalAnalyzer::stmt_list()
 {
     int errors = 0;
     printP2File("Stmt_List", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(STMT_LIST_F, token))
-        token = lex->GetToken();
+    validateToken(STMT_LIST_F);
     
     // Rule 5
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
@@ -278,6 +275,9 @@ int SyntacticalAnalyzer::stmt_list()
     else if (token == RPAREN_T)
         printP2FileUsing("6");
 
+    /* This else statement will only 
+     * be executed if the token is an 
+     * EOF_T */
     else
     {
         errors++;
@@ -291,8 +291,7 @@ int SyntacticalAnalyzer::stmt_list()
 int SyntacticalAnalyzer::more_defines(){
     int errors = 0;
     printP2File("More_Defines", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(MORE_DEFINES_F, token))
-        token = lex->GetToken();
+    validateToken(MORE_DEFINES_F);
 
     if (token == IDENT_T)
     {
@@ -306,7 +305,7 @@ int SyntacticalAnalyzer::more_defines(){
         else 
         {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
         }
 
     }
@@ -321,34 +320,17 @@ int SyntacticalAnalyzer::more_defines(){
 
         else
         {
-            // lex->ReportError("start while loop");
-            // while(token != EOF_T)
-            // {
-            //     writeLstExpected(LPAREN_T);
-            //     writeLstUnexpected();
-            //     token = lex->GetToken();
-            //     errors++;
-            //     if (token == LPAREN_T)
-            //     {
-            //         lex->GetToken();
-            //         break;
-            //     }
-            // }
-            // lex->ReportError("end while loop");
-            writeLstExpected(LPAREN_T);
             errors++;
-            
-            
+            writeLstExpected(LPAREN_T);   
         }
         
         errors += more_defines();
-        
-    
     }
 
+    /* terminal and non-terminal option 
+     * should result in what error message? */
     else
     {
-        // writeLstExpected(LPAREN_T);
         errors++;
         writeLstUnexpected();
     }
@@ -357,11 +339,12 @@ int SyntacticalAnalyzer::more_defines(){
     return errors;
 
 }
+
 int SyntacticalAnalyzer::define(){
     int errors = 0;
     printP2File("Define", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(DEFINE_F, token))
-        token = lex->GetToken();
+    validateToken(DEFINE_F);
+        
 
     // Rule 4
     if(token == DEFINE_T){
@@ -374,9 +357,8 @@ int SyntacticalAnalyzer::define(){
         else 
         {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(LPAREN_T);
         }
-
 
         if(token==IDENT_T)
             token = lex->GetToken();  // consume
@@ -384,7 +366,7 @@ int SyntacticalAnalyzer::define(){
         else 
         {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(IDENT_T);
         }
 
         errors += param_list();
@@ -395,7 +377,7 @@ int SyntacticalAnalyzer::define(){
         else
         {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
         }
 
         errors += stmt();
@@ -407,14 +389,14 @@ int SyntacticalAnalyzer::define(){
         else
         {
             errors++;
-            writeLstUnexpected();
+            writeLstExpected(RPAREN_T);
         }
     }
 
     else
     {
         errors++;
-        writeLstUnexpected();
+        writeLstExpected(DEFINE_T);
     }
 
     printP2Exiting("Define", lex->GetTokenName(token));
@@ -425,8 +407,7 @@ int SyntacticalAnalyzer::define(){
 int SyntacticalAnalyzer::action() {
     int errors = 0;
     printP2File("Action", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(ACTION_F, token))
-        token = lex->GetToken();
+    validateToken(ACTION_F);
 
     switch (token) {
 
@@ -448,7 +429,7 @@ int SyntacticalAnalyzer::action() {
             else 
             {
                 errors++;
-                writeLstUnexpected();
+                writeLstExpected(LPAREN_T);
             }
 
             errors += stmt_pair_body();
@@ -616,8 +597,7 @@ int SyntacticalAnalyzer::action() {
 int SyntacticalAnalyzer::any_other_token() {
     int errors = 0;
     printP2File("Any_Other_Token", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(ANY_OTHER_TOKEN_F, token))
-        token = lex->GetToken();
+    validateToken(ANY_OTHER_TOKEN_F);
 
     switch (token) {
 
@@ -630,7 +610,7 @@ int SyntacticalAnalyzer::any_other_token() {
             }
             else {
                 errors++;
-                writeLstUnexpected();
+                writeLstExpected(RPAREN_T);
             }
             break;
 
@@ -804,8 +784,7 @@ int SyntacticalAnalyzer::any_other_token() {
 int SyntacticalAnalyzer::stmt_pair() {
     int errors = 0;
     printP2File("Stmt_Pair", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(STMT_PAIR_F, token))
-        token = lex->GetToken();
+    validateToken(STMT_PAIR_F);
 
     // rule 20.
     if (token == LPAREN_T) {
@@ -834,8 +813,7 @@ int SyntacticalAnalyzer::stmt_pair() {
 int SyntacticalAnalyzer::param_list() {
     int errors = 0;
     printP2File("Param_List", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(PARAM_LIST_F, token))
-        token = lex->GetToken();
+    validateToken(PARAM_LIST_F);
 
     //If IDENT_T, apply rule 16. 
     if (token == IDENT_T) {
@@ -845,9 +823,7 @@ int SyntacticalAnalyzer::param_list() {
     }
 
     else if (token == RPAREN_T)
-    {
         printP2FileUsing("17");	
-    }
 
     else 
     {
@@ -863,8 +839,7 @@ int SyntacticalAnalyzer::else_part()
 {
     int errors = 0;
     printP2File("Else_Part", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(ELSE_PART_F, token))
-        token = lex->GetToken();
+    validateToken(ELSE_PART_F);
 
     // Rule 18
     if (token == LPAREN_T || token == IDENT_T || token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T)
@@ -893,8 +868,7 @@ int SyntacticalAnalyzer::quoted_lit()
 {
     int errors = 0;
     printP2File("Quoted_Lit", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(QUOTED_LIT_F, token))
-        token = lex->GetToken();
+    validateToken(QUOTED_LIT_F);
 
     // These two tokens are the only possible errors
     if (token == EOF_T || token == RPAREN_T) {
@@ -916,9 +890,7 @@ int SyntacticalAnalyzer::literal()
 {
     int errors = 0;
     printP2File("Literal", lex->GetTokenName(token), lex->GetLexeme());
-    
-    while (!isValidToken(LITERAL_F, token))
-        token = lex->GetToken();
+    validateToken(LITERAL_F);
 
     // 10
     if (token == NUMLIT_T)
@@ -955,8 +927,7 @@ int SyntacticalAnalyzer::more_tokens()
     // [0,14,83,14,15,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,83], // <more_tokens>    
     int errors = 0;
     printP2File("More_Tokens", lex->GetTokenName(token), lex->GetLexeme());
-    while (!isValidToken(MORE_TOKENS_F, token))
-        token = lex->GetToken();
+    validateToken(MORE_TOKENS_F);
 
     // This is the only rule that can throw an err
     if (token == EOF_T) 
@@ -974,7 +945,8 @@ int SyntacticalAnalyzer::more_tokens()
     // Rule 14
     // else if its not RPARENT_T || EOF_T
     // 5 - 34
-    else {
+    else 
+    {
         printP2FileUsing("14");
         errors += any_other_token();
         errors += more_tokens();
@@ -984,28 +956,45 @@ int SyntacticalAnalyzer::more_tokens()
     return errors;
 }
 
-bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap, token_type token_T)
+bool SyntacticalAnalyzer::isValidToken(functionRuleNumberMapping fMap)
 {
-    if (token == EOF_T)
-        return true;
+    /* Sloppy */
+    // if (token == EOF_T)
+        // return true;
 
-    // if (token == RPAREN_T || token == LPAREN_T)
-    //     return true;
-
-    tokenMapper token_M = row[token_T];
+    tokenMapper token_M = row[token];
     
     if (syntacticalRuleNumbers[fMap][token_M] != 82 && syntacticalRuleNumbers[fMap][token_M] != 83)
-    {
         return true;
-    }
-  
-    // writeLstUnexpected();
-    // debug << "writing from isValidToken()" << endl;
-    lex->ReportError("\'" 
-                    + lex->GetLexeme() 
-                    + "\'"
-                    + " unexpected "
-                    + " - writting from isValid()");
+    
     return false;
 }
-  
+
+void SyntacticalAnalyzer::validateToken(functionRuleNumberMapping fMap)
+{   
+    /* If a token != EOF_T only then should
+     * the token be advanced */
+    if (!isValidToken(fMap))
+    {
+        writeLstUnexpected();
+        // lex->ReportError("\'" 
+        //         + lex->GetLexeme() 
+        //         + "\'"
+        //         + " unexpected "
+        //         + " - writting from validateToken()");
+
+        if (token != EOF_T)
+            token = lex->GetToken();
+    }
+
+    /* If we are entering a function and we have an EOF_T 
+     * there is nothing to advance */
+    while (!isValidToken(fMap) && token != EOF_T)
+        token = lex->GetToken();
+    
+    /* When entering into a function and its EOF_T, 
+     * by default EOF_T is always an invalid token 
+     * when entering into a function */
+    // if (token == EOF_T)
+        // writeLstUnexpected();
+}

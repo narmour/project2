@@ -61,7 +61,8 @@ class SyntacticalAnalyzer
     void printP2FileUsing(const string &ruleNumber);
     void printP2Exiting(const string &funkyName, const string &token);
 	void printDebug(const string &msg);
-    bool isValidToken(functionRuleNumberMapping fMap, token_type token);
+    bool isValidToken(functionRuleNumberMapping fMap);
+    void validateToken(functionRuleNumberMapping fMap);
     map <token_type, tokenMapper> row; 
 };
 	
